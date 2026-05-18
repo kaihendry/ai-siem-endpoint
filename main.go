@@ -178,6 +178,7 @@ func putEvent(ctx context.Context, run AuditRun, userAgent string) (string, erro
 		"findings":       &types.AttributeValueMemberS{Value: string(findingsJSON)},
 		"finding_count":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", len(run.Findings))},
 		"user_agent":     &types.AttributeValueMemberS{Value: userAgent},
+		"ttl":            &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", run.Timestamp.UTC().Add(24*time.Hour).Unix())},
 	}
 
 	_, err = eventPutter.PutItem(ctx, &dynamodb.PutItemInput{
