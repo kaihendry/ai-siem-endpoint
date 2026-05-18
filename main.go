@@ -41,6 +41,18 @@ type Finding struct {
 	Confidence  *float64 `json:"confidence,omitempty"`
 }
 
+type SeverityASFF struct {
+	Label    string `json:"Label,omitempty"`
+	Original string `json:"Original,omitempty"`
+}
+
+type ResourceASFF struct {
+	ID        string `json:"Id"`
+	Type      string `json:"Type"`
+	Region    string `json:"Region,omitempty"`
+	Partition string `json:"Partition,omitempty"`
+}
+
 type AuditRun struct {
 	SchemaVersion string    `json:"schema_version"`
 	RunID         string    `json:"run_id"`
