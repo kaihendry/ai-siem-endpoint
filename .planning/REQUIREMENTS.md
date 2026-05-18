@@ -17,8 +17,8 @@
 
 ### Validation
 
-- [ ] **VALD-01**: POST / rejects payloads missing required fields (run_id, timestamp, host) with HTTP 400 and descriptive error
-- [ ] **VALD-02**: POST / rejects payloads exceeding 1 MB with HTTP 413
+- [x] **VALD-01**: POST / rejects payloads missing required fields (run_id, timestamp, host) with HTTP 400 and descriptive error
+- [x] **VALD-02**: POST / rejects payloads exceeding 1 MB with HTTP 413
 
 ### Tests
 
@@ -59,8 +59,8 @@
 | CICD-02 | Phase 1 | Pending |
 | CICD-03 | Phase 1 | Pending |
 | RUNT-01 | Phase 1 | Pending |
-| VALD-01 | Phase 2 | Pending |
-| VALD-02 | Phase 2 | Pending |
+| VALD-01 | Phase 2 | Complete |
+| VALD-02 | Phase 2 | Complete |
 | TEST-01 | Phase 2 | Pending |
 | TEST-02 | Phase 2 | Pending |
 
