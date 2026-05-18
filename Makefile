@@ -10,22 +10,21 @@ deploy:
 	sam deploy \
 		--stack-name $(STACK) \
 		--region $(REGION) \
-		--profile $(PROFILE) \
 		--capabilities CAPABILITY_IAM \
 		--resolve-s3 \
-		--no-confirm-changeset
+		--no-confirm-changeset \
+		--no-fail-on-empty-changeset
 
 destroy:
 	sam delete \
 		--stack-name $(STACK) \
 		--region $(REGION) \
-		--profile $(PROFILE) \
 		--no-prompts
 
 local:
 	go run .
 
 login:
-	aws sso login --profile AdministratorAccess-407461997746 --use-device-code
+	aws sso login --profile $(PROFILE) --use-device-code
 
 .PHONY: build-MainFunction deploy destroy local
