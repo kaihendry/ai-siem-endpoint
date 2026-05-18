@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-last_updated: "2026-05-18T13:40:39.973Z"
+last_updated: "2026-05-18T13:44:47.679Z"
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 2
-  percent: 50
+  completed_plans: 3
+  percent: 100
 ---
 
 # Project State: ai-siem-endpoint
@@ -26,14 +26,22 @@ See: .planning/PROJECT.md (updated 2026-05-18)
 | Phase | Name | Status | Plans |
 |-------|------|--------|-------|
 | 1 | CI/CD + Runtime | ✓ Complete | 1/1 |
-| 2 | Validation + Tests | ○ Pending | — |
+| 2 | Validation + Tests | ✓ Complete | 2/2 |
 
 ## Current Phase
 
-**Phase 2: Validation + Tests**
+**Phase 2: Validation + Tests — Complete**
 
 - Goal: The endpoint validates incoming payloads, caps request size, and has a test suite that CI runs before deploying.
-- Status: Not started
+- Status: Complete (2026-05-18)
+- Plans completed: 02-01 (payload validation), 02-02 (unit + handler tests)
+
+## Decisions
+
+- MaxBytesReader at 1 MiB enforced before JSON decode in handlePost
+- Required fields: run_id, timestamp, host validated with 400 responses
+- dynamoPutter interface extracted for test injection without breaking production path
+- mockPutter + TestMain pattern chosen for DynamoDB-free test isolation
 
 ---
-*State initialized: 2026-05-18 | Phase 1 completed: 2026-05-18*
+*State initialized: 2026-05-18 | Phase 1 completed: 2026-05-18 | Phase 2 completed: 2026-05-18*

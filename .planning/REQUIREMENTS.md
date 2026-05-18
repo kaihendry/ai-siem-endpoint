@@ -22,8 +22,8 @@
 
 ### Tests
 
-- [ ] **TEST-01**: Unit tests cover putEvent DynamoDB attribute construction (round-trip serialization)
-- [ ] **TEST-02**: Handler tests cover POST / happy path and validation error paths using httptest
+- [x] **TEST-01**: Unit tests cover putEvent DynamoDB attribute construction (round-trip serialization)
+- [x] **TEST-02**: Handler tests cover POST / happy path and validation error paths using httptest
 
 ## v2 Requirements
 
@@ -61,8 +61,8 @@
 | RUNT-01 | Phase 1 | Pending |
 | VALD-01 | Phase 2 | Complete |
 | VALD-02 | Phase 2 | Complete |
-| TEST-01 | Phase 2 | Pending |
-| TEST-02 | Phase 2 | Pending |
+| TEST-01 | Phase 2 | Complete |
+| TEST-02 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 8 total
