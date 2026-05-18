@@ -26,6 +26,7 @@ func init() {
 		tableName = "mock-siem-events"
 	}
 	dynamoClient = newDynamoClient()
+	eventPutter = dynamoClient
 }
 
 // T006: domain types matching internal/audit/AuditRun and internal/modules/Finding
@@ -68,8 +69,16 @@ type SummaryRow struct {
 }
 
 // T007: DynamoDB client setup
+
+// dynamoPutter is the minimal interface required by putEvent.
+// Tests can replace eventPutter with a mock without affecting the real DynamoDB client.
+type dynamoPutter interface {
+	PutItem(ctx context.Context, params *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error)
+}
+
 var (
 	dynamoClient *dynamodb.Client
+	eventPutter  dynamoPutter
 	tableName    string
 )
 
@@ -171,7 +180,7 @@ func putEvent(ctx context.Context, run AuditRun, userAgent string) (string, erro
 		"user_agent":     &types.AttributeValueMemberS{Value: userAgent},
 	}
 
-	_, err = dynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
+	_, err = eventPutter.PutItem(ctx, &dynamodb.PutItemInput{
 		TableName: aws.String(tableName),
 		Item:      item,
 	})
