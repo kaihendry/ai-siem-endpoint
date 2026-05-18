@@ -39,14 +39,27 @@ func TestPutEventAttributes(t *testing.T) {
 	eventPutter = mock
 
 	run := AuditRun{
-		RunID:      "test-run-1",
-		Timestamp:  time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC),
-		Host:       "testhost",
-		Score:      90,
-		ExitCode:   0,
-		DurationMs: 500,
+		RunID:        "test-run-1",
+		Timestamp:    time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC),
+		Host:         "testhost",
+		Score:        90,
+		ExitCode:     0,
+		DurationMs:   500,
+		ProductArn:   "arn:aws:securityhub:eu-west-2:123456789012:product/123456789012/default",
+		AwsAccountId: "123456789012",
 		Findings: []Finding{
-			{Type: "policy", Severity: "high", Module: "guardrails"},
+			{
+				Type:        "policy",
+				Severity:    "high",
+				Module:      "guardrails",
+				ID:          "finding-001",
+				Title:       "Test Finding",
+				GeneratorId: "ai-check-guardrails/policy",
+				ASFFSeverity: &SeverityASFF{Label: "HIGH", Original: "HIGH"},
+				Resources:   []ResourceASFF{{ID: "arn:aws:ec2::123456789012:instance/i-abc", Type: "AwsEc2Instance"}},
+				CreatedAt:   "2024-01-15T10:00:00Z",
+				UpdatedAt:   "2024-01-15T10:00:00Z",
+			},
 		},
 	}
 
@@ -101,6 +114,22 @@ func TestPutEventAttributes(t *testing.T) {
 		t.Errorf("findings attribute missing or empty")
 	} else if !strings.Contains(findingsAttr.Value, "guardrails") {
 		t.Errorf("findings JSON %q does not contain \"guardrails\"", findingsAttr.Value)
+	}
+
+	// ASFF DynamoDB attribute assertions
+	productArnAttr, ok := item["product_arn"].(*types.AttributeValueMemberS)
+	if !ok || productArnAttr.Value != "arn:aws:securityhub:eu-west-2:123456789012:product/123456789012/default" {
+		t.Errorf("product_arn = %v, want correct ARN", item["product_arn"])
+	}
+	awsAccountAttr, ok := item["aws_account_id"].(*types.AttributeValueMemberS)
+	if !ok || awsAccountAttr.Value != "123456789012" {
+		t.Errorf("aws_account_id = %v, want \"123456789012\"", item["aws_account_id"])
+	}
+	if !strings.Contains(findingsAttr.Value, "finding-001") {
+		t.Errorf("findings JSON %q does not contain \"finding-001\"", findingsAttr.Value)
+	}
+	if !strings.Contains(findingsAttr.Value, `"Label":"HIGH"`) {
+		t.Errorf("findings JSON %q does not contain ASFF severity label", findingsAttr.Value)
 	}
 }
 
@@ -197,6 +226,40 @@ func TestHandlePost(t *testing.T) {
 		handlePost(rr, req)
 		if rr.Code != http.StatusRequestEntityTooLarge {
 			t.Errorf("status = %d, want 413; body: %s", rr.Code, rr.Body)
+		}
+	})
+
+	t.Run("asff extended payload returns 201", func(t *testing.T) {
+		payload := map[string]any{
+			"run_id":         "asff-run-1",
+			"timestamp":      "2024-01-15T10:00:00Z",
+			"host":           "ci-runner",
+			"product_arn":    "arn:aws:securityhub:eu-west-2:123456789012:product/123456789012/default",
+			"aws_account_id": "123456789012",
+			"findings": []map[string]any{
+				{
+					"type":          "policy",
+					"severity":      "HIGH",
+					"module":        "guardrails",
+					"description":   "Guardrail policy violation",
+					"Id":            "arn:aws:securityhub:eu-west-2:123456789012:finding/abc-001",
+					"title":         "Guardrail Policy Violation",
+					"generator_id":  "ai-check-guardrails/policy",
+					"asff_types":    []string{"Software and Configuration Checks/AWS Security Best Practices"},
+					"asff_severity": map[string]string{"Label": "HIGH", "Original": "HIGH"},
+					"resources":     []map[string]string{{"Id": "arn:aws:lambda:eu-west-2:123456789012:function:my-fn", "Type": "AwsLambdaFunction"}},
+					"created_at":    "2024-01-15T10:00:00Z",
+					"updated_at":    "2024-01-15T10:00:00Z",
+				},
+			},
+		}
+		body, _ := json.Marshal(payload)
+		rr := postJSON(body)
+		if rr.Code != http.StatusCreated {
+			t.Errorf("status = %d, want 201; body: %s", rr.Code, rr.Body)
+		}
+		if !strings.Contains(rr.Body.String(), "run_id") {
+			t.Errorf("response body %q does not contain \"run_id\"", rr.Body.String())
 		}
 	})
 
