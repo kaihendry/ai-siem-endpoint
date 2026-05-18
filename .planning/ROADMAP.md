@@ -29,21 +29,27 @@ Plans:
 
 ---
 
-### Phase 2: Validation + Tests
+### Phase 2: Validation + Tests ✓ Complete
 
 **Goal:** The endpoint validates incoming payloads, caps request size, and has a test suite that CI runs before deploying.
 **Mode:** mvp
 
 **Requirements:**
-- VALD-01: POST / rejects payloads missing required fields with HTTP 400
-- VALD-02: POST / rejects payloads exceeding 1 MB with HTTP 413
-- TEST-01: Unit tests for putEvent DynamoDB attribute construction
-- TEST-02: Handler tests for POST / happy path and validation errors
+- VALD-01: POST / rejects payloads missing required fields with HTTP 400 ✓
+- VALD-02: POST / rejects payloads exceeding 1 MB with HTTP 413 ✓
+- TEST-01: Unit tests for putEvent DynamoDB attribute construction ✓
+- TEST-02: Handler tests for POST / happy path and validation errors ✓
+
+**Plans:** 2 plans
+
+Plans:
+- [x] 02-01-PLAN.md — Add body size limit (1 MB → 413) and required field validation (timestamp, host → 400)
+- [x] 02-02-PLAN.md — Unit tests (putEvent attrs) + httptest handler tests (6 tests passing)
 
 **Success Criteria:**
-1. POST / with missing required field returns HTTP 400 with descriptive error
-2. POST / with body > 1 MB returns HTTP 413
-3. `go test ./...` passes and runs in the CI workflow before deployment
+1. POST / with missing required field returns HTTP 400 with descriptive error ✓
+2. POST / with body > 1 MB returns HTTP 413 ✓
+3. `go test ./...` passes and runs in the CI workflow before deployment ✓
 
 ---
 
@@ -55,10 +61,10 @@ Plans:
 | CICD-02 | Phase 1 | ✓ Complete |
 | CICD-03 | Phase 1 | ✓ Complete |
 | RUNT-01 | Phase 1 | ✓ Complete |
-| VALD-01 | Phase 2 | Pending |
-| VALD-02 | Phase 2 | Pending |
-| TEST-01 | Phase 2 | Pending |
-| TEST-02 | Phase 2 | Pending |
+| VALD-01 | Phase 2 | ✓ Complete |
+| VALD-02 | Phase 2 | ✓ Complete |
+| TEST-01 | Phase 2 | ✓ Complete |
+| TEST-02 | Phase 2 | ✓ Complete |
 
 **Coverage:** 8/8 v1 requirements mapped ✓
 
