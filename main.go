@@ -18,6 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/kaihendry/ai-siem-endpoint/audit"
 )
 
 func init() {
@@ -29,55 +30,7 @@ func init() {
 	eventPutter = dynamoClient
 }
 
-// T006: domain types matching internal/audit/AuditRun and internal/modules/Finding
-
-type Finding struct {
-	Type        string   `json:"type"`
-	Severity    string   `json:"severity"`
-	Module      string   `json:"module"`
-	Resource    string   `json:"resource"`
-	Description string   `json:"description"`
-	Remediation string   `json:"remediation"`
-	Confidence  *float64 `json:"confidence,omitempty"`
-	// ASFF fields — all omitempty for backwards compatibility
-	ID          string         `json:"Id,omitempty"`
-	Title       string         `json:"title,omitempty"`
-	GeneratorId string         `json:"generator_id,omitempty"`
-	ASFFTypes   []string       `json:"asff_types,omitempty"`
-	ASFFSeverity *SeverityASFF `json:"asff_severity,omitempty"`
-	Resources   []ResourceASFF `json:"resources,omitempty"`
-	CreatedAt   string         `json:"created_at,omitempty"`
-	UpdatedAt   string         `json:"updated_at,omitempty"`
-}
-
-type SeverityASFF struct {
-	Label    string `json:"Label,omitempty"`
-	Original string `json:"Original,omitempty"`
-}
-
-type ResourceASFF struct {
-	ID        string `json:"Id"`
-	Type      string `json:"Type"`
-	Region    string `json:"Region,omitempty"`
-	Partition string `json:"Partition,omitempty"`
-}
-
-type AuditRun struct {
-	SchemaVersion string    `json:"schema_version"`
-	RunID         string    `json:"run_id"`
-	Timestamp     time.Time `json:"timestamp"`
-	Host          string    `json:"host"`
-	User          string    `json:"user"`
-	Mode          string    `json:"mode"`
-	Version       string    `json:"version"`
-	Findings      []Finding `json:"findings"`
-	Score         int       `json:"score"`
-	ExitCode      int       `json:"exit_code"`
-	DurationMs    int64     `json:"duration_ms"`
-	// ASFF run-level identity fields — omitempty for backwards compatibility
-	ProductArn   string `json:"product_arn,omitempty"`
-	AwsAccountId string `json:"aws_account_id,omitempty"`
-}
+// Domain types live in the audit sub-package so ai-check-guardrails can import them.
 
 // T013: summary view type
 type SummaryRow struct {
@@ -145,7 +98,7 @@ func main() {
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
-	var run AuditRun
+	var run audit.AuditRun
 	if err := json.NewDecoder(r.Body).Decode(&run); err != nil {
 		var maxBytesErr *http.MaxBytesError
 		if errors.As(err, &maxBytesErr) {
@@ -178,7 +131,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, map[string]string{"run_id": run.RunID, "sk": sk})
 }
 
-func putEvent(ctx context.Context, run AuditRun, userAgent string) (string, error) {
+func putEvent(ctx context.Context, run audit.AuditRun, userAgent string) (string, error) {
 	sk := run.Timestamp.UTC().Format(time.RFC3339) + "#" + run.RunID
 
 	findingsJSON, err := json.Marshal(run.Findings)
@@ -419,7 +372,7 @@ a{color:#0070f3}
 </html>`
 
 type detailTemplateData struct {
-	AuditRun
+	audit.AuditRun
 	UserAgent string
 }
 
@@ -432,7 +385,7 @@ var detailTemplate = template.Must(template.New("detail").Funcs(template.FuncMap
 	},
 }).Parse(detailTmpl))
 
-func getEvent(ctx context.Context, sk string) (*AuditRun, string, error) {
+func getEvent(ctx context.Context, sk string) (*audit.AuditRun, string, error) {
 	out, err := dynamoClient.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]types.AttributeValue{
@@ -448,7 +401,7 @@ func getEvent(ctx context.Context, sk string) (*AuditRun, string, error) {
 	}
 
 	item := out.Item
-	run := &AuditRun{}
+	run := &audit.AuditRun{}
 
 	strAttr := func(key string) string {
 		if v, ok := item[key].(*types.AttributeValueMemberS); ok {

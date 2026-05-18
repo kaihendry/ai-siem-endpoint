@@ -12,6 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/kaihendry/ai-siem-endpoint/audit"
 )
 
 // mockPutter captures the last PutItemInput for inspection by tests.
@@ -38,7 +39,7 @@ func TestPutEventAttributes(t *testing.T) {
 	mock := &mockPutter{}
 	eventPutter = mock
 
-	run := AuditRun{
+	run := audit.AuditRun{
 		RunID:        "test-run-1",
 		Timestamp:    time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC),
 		Host:         "testhost",
@@ -47,7 +48,7 @@ func TestPutEventAttributes(t *testing.T) {
 		DurationMs:   500,
 		ProductArn:   "arn:aws:securityhub:eu-west-2:123456789012:product/123456789012/default",
 		AwsAccountId: "123456789012",
-		Findings: []Finding{
+		Findings: []audit.Finding{
 			{
 				Type:        "policy",
 				Severity:    "high",
@@ -55,8 +56,8 @@ func TestPutEventAttributes(t *testing.T) {
 				ID:          "finding-001",
 				Title:       "Test Finding",
 				GeneratorId: "ai-check-guardrails/policy",
-				ASFFSeverity: &SeverityASFF{Label: "HIGH", Original: "HIGH"},
-				Resources:   []ResourceASFF{{ID: "arn:aws:ec2::123456789012:instance/i-abc", Type: "AwsEc2Instance"}},
+				ASFFSeverity: &audit.SeverityASFF{Label: "HIGH", Original: "HIGH"},
+				Resources:   []audit.ResourceASFF{{ID: "arn:aws:ec2::123456789012:instance/i-abc", Type: "AwsEc2Instance"}},
 				CreatedAt:   "2024-01-15T10:00:00Z",
 				UpdatedAt:   "2024-01-15T10:00:00Z",
 			},
