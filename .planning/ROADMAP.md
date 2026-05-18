@@ -20,7 +20,7 @@
 **Plans:** 1 plan
 
 Plans:
-- [ ] 01-01-PLAN.md — Create GitHub Actions workflow, fix Makefile credentials, upgrade Lambda runtime
+- [x] 01-01-PLAN.md — Create GitHub Actions workflow, fix Makefile credentials, upgrade Lambda runtime
 
 **Success Criteria:**
 1. `.github/workflows/sam-pipeline.yml` exists and triggers on push to main
@@ -51,10 +51,10 @@ Plans:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CICD-01 | Phase 1 | Pending |
-| CICD-02 | Phase 1 | Pending |
-| CICD-03 | Phase 1 | Pending |
-| RUNT-01 | Phase 1 | Pending |
+| CICD-01 | Phase 1 | ✓ Complete |
+| CICD-02 | Phase 1 | ✓ Complete |
+| CICD-03 | Phase 1 | ✓ Complete |
+| RUNT-01 | Phase 1 | ✓ Complete |
 | VALD-01 | Phase 2 | Pending |
 | VALD-02 | Phase 2 | Pending |
 | TEST-01 | Phase 2 | Pending |
