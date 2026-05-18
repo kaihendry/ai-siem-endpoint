@@ -17,6 +17,11 @@
 - CICD-03: CI pipeline runs tests before deploying
 - RUNT-01: Lambda runtime upgraded to provided.al2023
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 01-01-PLAN.md — Create GitHub Actions workflow, fix Makefile credentials, upgrade Lambda runtime
+
 **Success Criteria:**
 1. `.github/workflows/sam-pipeline.yml` exists and triggers on push to main
 2. `make deploy` succeeds in CI without `--profile` flag (credentials from OIDC env)
