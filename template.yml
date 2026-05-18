@@ -9,7 +9,7 @@ Globals:
     MemorySize: 128
     Architectures:
       - arm64
-    Runtime: provided.al2
+    Runtime: provided.al2023
     Environment:
       Variables:
         DYNAMODB_TABLE: !Ref EventsTable
