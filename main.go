@@ -126,6 +126,14 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid payload: run_id is required"})
 		return
 	}
+	if run.Timestamp.IsZero() {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid payload: timestamp is required"})
+		return
+	}
+	if run.Host == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid payload: host is required"})
+		return
+	}
 
 	sk, err := putEvent(r.Context(), run, r.Header.Get("User-Agent"))
 	if err != nil {
