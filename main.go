@@ -467,6 +467,11 @@ func handleDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	jsonMode := strings.HasSuffix(encoded, ".json")
+	if jsonMode {
+		encoded = strings.TrimSuffix(encoded, ".json")
+	}
+
 	skBytes, err := base64.URLEncoding.DecodeString(encoded)
 	if err != nil {
 		http.Error(w, "invalid event id", http.StatusBadRequest)
@@ -481,6 +486,18 @@ func handleDetail(w http.ResponseWriter, r *http.Request) {
 	}
 	if run == nil {
 		http.NotFound(w, r)
+		return
+	}
+
+	if jsonMode {
+		out, err := json.MarshalIndent(run, "", "  ")
+		if err != nil {
+			slog.Error("json marshal failed", "err", err)
+			http.Error(w, "failed to marshal event", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
 		return
 	}
 
