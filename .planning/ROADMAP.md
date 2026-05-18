@@ -64,12 +64,12 @@ Plans:
 - ASFF-04: POST / accepts and stores ASFF-extended payloads
 - ASFF-05: Tests cover new ASFF fields in putEvent and handler
 
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 03-01-PLAN.md — Add SeverityASFF/ResourceASFF types; extend Finding (8 new fields) and AuditRun (2 new fields) with omitempty
-- [ ] 03-02-PLAN.md — Extend putEvent to persist product_arn/aws_account_id; extend getEvent to read them back
-- [ ] 03-03-PLAN.md — Extend TestPutEventAttributes with ASFF assertions; add ASFF round-trip sub-test in TestHandlePost
+- [x] 03-02-PLAN.md — Extend putEvent to persist product_arn/aws_account_id; extend getEvent to read them back
+- [x] 03-03-PLAN.md — Extend TestPutEventAttributes with ASFF assertions; add ASFF round-trip sub-test in TestHandlePost
 
 **Success Criteria:**
 1. A finding stored via POST / round-trips all ASFF required fields
