@@ -1,7 +1,7 @@
 # Roadmap: ai-siem-endpoint
 
 **Created:** 2026-05-18
-**Phases:** 2
+**Phases:** 3
 **Requirements covered:** 8/8 ✓
 
 ---
@@ -53,6 +53,31 @@ Plans:
 
 ---
 
+### Phase 3: ASFF Data Model Alignment
+
+**Goal:** Align the `AuditRun` and `Finding` data model with the AWS Security Finding Format (ASFF) so findings stored in this service can be forwarded to AWS Security Hub or consumed by ASFF-aware tooling without translation.
+
+**Requirements:**
+- ASFF-01: `Finding` struct maps to required ASFF fields (Id, ProductArn, GeneratorId, AwsAccountId, Types, CreatedAt, UpdatedAt, Severity.Label, Title, Description, Resources)
+- ASFF-02: `AuditRun` retains its existing fields for backwards compatibility; ASFF fields are added, not replacing
+- ASFF-03: DynamoDB storage persists new ASFF fields
+- ASFF-04: POST / accepts and stores ASFF-extended payloads
+- ASFF-05: Tests cover new ASFF fields in putEvent and handler
+
+**Plans:** 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Add SeverityASFF/ResourceASFF types; extend Finding (8 new fields) and AuditRun (2 new fields) with omitempty
+- [ ] 03-02-PLAN.md — Extend putEvent to persist product_arn/aws_account_id; extend getEvent to read them back
+- [ ] 03-03-PLAN.md — Extend TestPutEventAttributes with ASFF assertions; add ASFF round-trip sub-test in TestHandlePost
+
+**Success Criteria:**
+1. A finding stored via POST / round-trips all ASFF required fields
+2. `go test ./...` passes with coverage of new ASFF fields
+3. Existing non-ASFF payloads still accepted (backwards compatible)
+
+---
+
 ## Requirement Coverage
 
 | Requirement | Phase | Status |
@@ -65,8 +90,13 @@ Plans:
 | VALD-02 | Phase 2 | ✓ Complete |
 | TEST-01 | Phase 2 | ✓ Complete |
 | TEST-02 | Phase 2 | ✓ Complete |
+| ASFF-01 | Phase 3 | Planned |
+| ASFF-02 | Phase 3 | Planned |
+| ASFF-03 | Phase 3 | Planned |
+| ASFF-04 | Phase 3 | Planned |
+| ASFF-05 | Phase 3 | Planned |
 
-**Coverage:** 8/8 v1 requirements mapped ✓
+**Coverage:** 8/8 v1 requirements mapped ✓ + 5/5 Phase 3 requirements planned
 
 ---
 *Roadmap created: 2026-05-18*
