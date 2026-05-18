@@ -199,6 +199,8 @@ func putEvent(ctx context.Context, run AuditRun, userAgent string) (string, erro
 		"score":          &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", run.Score)},
 		"exit_code":      &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", run.ExitCode)},
 		"duration_ms":    &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", run.DurationMs)},
+		"product_arn":    &types.AttributeValueMemberS{Value: run.ProductArn},
+		"aws_account_id": &types.AttributeValueMemberS{Value: run.AwsAccountId},
 		"findings":       &types.AttributeValueMemberS{Value: string(findingsJSON)},
 		"finding_count":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", len(run.Findings))},
 		"user_agent":     &types.AttributeValueMemberS{Value: userAgent},
@@ -467,6 +469,8 @@ func getEvent(ctx context.Context, sk string) (*AuditRun, string, error) {
 	run.User = strAttr("user")
 	run.Mode = strAttr("mode")
 	run.Version = strAttr("version")
+	run.ProductArn   = strAttr("product_arn")
+	run.AwsAccountId = strAttr("aws_account_id")
 
 	if ts := strAttr("timestamp"); ts != "" {
 		run.Timestamp, _ = time.Parse(time.RFC3339, ts)
