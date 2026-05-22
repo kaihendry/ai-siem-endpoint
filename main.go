@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -158,6 +159,9 @@ func putEvent(ctx context.Context, run audit.AuditRun, userAgent string) (string
 		"finding_count":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", len(run.Findings))},
 		"user_agent":     &types.AttributeValueMemberS{Value: userAgent},
 		"ttl":            &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", run.Timestamp.UTC().Add(24*time.Hour).Unix())},
+	}
+	if len(run.Config) > 0 {
+		item["config"] = &types.AttributeValueMemberS{Value: string(run.Config)}
 	}
 
 	_, err = eventPutter.PutItem(ctx, &dynamodb.PutItemInput{
@@ -368,6 +372,10 @@ a{color:#0070f3}
 {{else}}
 <p>No findings — clean run.</p>
 {{end}}
+{{if .Config}}
+<h2>Config</h2>
+<pre style="background:#f5f5f5;padding:1rem;overflow:auto;border-radius:4px">{{prettyJSON .Config}}</pre>
+{{end}}
 </body>
 </html>`
 
@@ -382,6 +390,13 @@ var detailTemplate = template.Must(template.New("detail").Funcs(template.FuncMap
 			return 0
 		}
 		return *p * n
+	},
+	"prettyJSON": func(raw json.RawMessage) string {
+		var buf bytes.Buffer
+		if err := json.Indent(&buf, raw, "", "  "); err != nil {
+			return string(raw)
+		}
+		return buf.String()
 	},
 }).Parse(detailTmpl))
 
@@ -424,6 +439,9 @@ func getEvent(ctx context.Context, sk string) (*audit.AuditRun, string, error) {
 	run.Version = strAttr("version")
 	run.ProductArn   = strAttr("product_arn")
 	run.AwsAccountId = strAttr("aws_account_id")
+	if cfg := strAttr("config"); cfg != "" {
+		run.Config = json.RawMessage(cfg)
+	}
 
 	if ts := strAttr("timestamp"); ts != "" {
 		run.Timestamp, _ = time.Parse(time.RFC3339, ts)

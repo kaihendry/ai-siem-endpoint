@@ -1,6 +1,9 @@
 package audit
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type SeverityASFF struct {
 	Label    string `json:"Label,omitempty"`
@@ -48,4 +51,6 @@ type AuditRun struct {
 	// ASFF run-level identity fields — omitempty for backwards compatibility
 	ProductArn   string `json:"product_arn,omitempty"`
 	AwsAccountId string `json:"aws_account_id,omitempty"`
+	// Config holds the raw JSON configuration the CLI tool used for this run.
+	Config json.RawMessage `json:"config,omitempty"`
 }
