@@ -53,7 +53,7 @@ Plans:
 
 ---
 
-### Phase 3: ASFF Data Model Alignment
+### Phase 3: ASFF Data Model Alignment ✓ Complete
 
 **Goal:** Align the `AuditRun` and `Finding` data model with the AWS Security Finding Format (ASFF) so findings stored in this service can be forwarded to AWS Security Hub or consumed by ASFF-aware tooling without translation.
 
@@ -90,13 +90,13 @@ Plans:
 | VALD-02 | Phase 2 | ✓ Complete |
 | TEST-01 | Phase 2 | ✓ Complete |
 | TEST-02 | Phase 2 | ✓ Complete |
-| ASFF-01 | Phase 3 | Planned |
-| ASFF-02 | Phase 3 | Planned |
-| ASFF-03 | Phase 3 | Planned |
-| ASFF-04 | Phase 3 | Planned |
-| ASFF-05 | Phase 3 | Planned |
+| ASFF-01 | Phase 3 | ✓ Complete |
+| ASFF-02 | Phase 3 | ✓ Complete |
+| ASFF-03 | Phase 3 | ✓ Complete |
+| ASFF-04 | Phase 3 | ✓ Complete |
+| ASFF-05 | Phase 3 | ✓ Complete |
 
-**Coverage:** 8/8 v1 requirements mapped ✓ + 5/5 Phase 3 requirements planned
+**Coverage:** 13/13 requirements ✓ Complete
 
 ---
 *Roadmap created: 2026-05-18*
